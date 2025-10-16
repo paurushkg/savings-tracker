@@ -5,10 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Savings Tracker{% endblock %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    {% load static %}
-    <!-- Debug: Static files root: {{ STATIC_URL }} -->
-    <link rel="stylesheet" type="text/css" href="{% static 'tracker/css/style.css' %}">
-    <!-- Debug: CSS path: {% static 'tracker/css/style.css' %} -->
+    <style>
+    /* Reset and base styles */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #8B4513 0%, #A0522D 25%, #CD853F 50%, #D2B48C 75%, #F5DEB3 100%); min-height: 100vh; padding: 20px; background-attachment: fixed; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .savings-tracker { background: rgba(255, 255, 255, 0.95); border-radius: 20px; padding: 30px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); border: 2px solid rgba(139, 69, 19, 0.2); }
+    .header { text-align: center; margin-bottom: 30px; }
+    .title { font-size: 2.5rem; font-weight: 700; color: #8B4513; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); }
+    .subtitle { font-size: 1.2rem; color: #A0522D; font-weight: 400; }
+    .progress-section { margin-bottom: 30px; text-align: center; }
+    .progress-info { font-size: 1.8rem; font-weight: 600; color: #8B4513; margin-bottom: 15px; }
+    .saved-amount { color: #228B22; }
+    .separator { color: #A0522D; margin: 0 10px; }
+    .total-amount { color: #8B4513; }
+    .progress-bar { width: 100%; height: 20px; background: rgba(139, 69, 19, 0.2); border-radius: 10px; overflow: hidden; margin-bottom: 10px; border: 1px solid rgba(139, 69, 19, 0.3); }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #32CD32, #228B22); border-radius: 10px; transition: width 0.5s ease; box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3); }
+    .progress-percentage { font-size: 1.1rem; color: #8B4513; font-weight: 500; }
+    .controls { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
+    .control-btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); }
+    .regenerate-btn { background: #4ECDC4; color: white; }
+    .regenerate-btn:hover { background: #45B7AF; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); }
+    .savings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; margin-bottom: 40px; padding: 20px; background: rgba(139, 69, 19, 0.05); border-radius: 15px; border: 1px solid rgba(139, 69, 19, 0.1); }
+    .savings-box { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: linear-gradient(145deg, #F5DEB3, #DEB887); border: 2px solid #CD853F; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), inset 0 1px 2px rgba(255, 255, 255, 0.5); position: relative; overflow: hidden; }
+    .savings-box:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.6); }
+    .savings-box.saved { background: linear-gradient(145deg, #98FB98, #32CD32); border-color: #228B22; color: white; transform: scale(0.95); }
+    .savings-box.saved:hover { transform: scale(1.02); }
+    .box-amount { font-size: 1.1rem; font-weight: 600; color: #8B4513; text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8); z-index: 1; }
+    .savings-box.saved .box-amount { color: white; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); }
+    .footer-message { text-align: center; padding: 20px; background: rgba(139, 69, 19, 0.1); border-radius: 15px; border: 1px solid rgba(139, 69, 19, 0.2); }
+    .footer-message p { font-size: 1.3rem; font-weight: 600; color: #8B4513; font-style: italic; text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8); }
+    .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
+    .loading-spinner { width: 50px; height: 50px; border: 5px solid rgba(255, 255, 255, 0.3); border-top: 5px solid #fff; border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes saveAnimation { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(0.95); } }
+    .savings-box.saving { animation: saveAnimation 0.3s ease; }
+    @media (max-width: 768px) {
+        body { padding: 10px; }
+        .savings-tracker { padding: 20px; }
+        .title { font-size: 2rem; }
+        .savings-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
+        .controls { flex-direction: column; align-items: center; }
+        .control-btn { width: 200px; }
+    }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -16,7 +56,211 @@
         {% endblock %}
     </div>
     
-    <script src="{% static 'tracker/js/main.js' %}"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const savingsBoxes = document.querySelectorAll('.savings-box');
+        const progressFill = document.querySelector('.progress-fill');
+        const progressPercentageElement = document.querySelector('.progress-percentage');
+        const savedAmountElement = document.querySelector('.saved-amount');
+        const regenerateBtn = document.getElementById('regenerate-btn');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        
+        let currentSavedAmount = window.savedAmount || 0;
+        let currentTotalAmount = window.totalAmount || 100000;
+        let currentProgressPercentage = window.progressPercentage || 0;
+        
+        savingsBoxes.forEach(box => {
+            box.addEventListener('click', function() { toggleSavingsBox(this); });
+        });
+        
+        if(regenerateBtn) regenerateBtn.addEventListener('click', regenerateBoxes);
+        
+        function toggleSavingsBox(boxElement) {
+            const boxId = boxElement.dataset.boxId;
+            const boxValue = parseInt(boxElement.dataset.value);
+            const isSaved = boxElement.classList.contains('saved');
+            
+            if (boxElement.classList.contains('saving')) return;
+            
+            if (isSaved && !confirm(`Remove ₹${boxValue.toLocaleString()} from savings?`)) return;
+            
+            boxElement.classList.add('saving');
+            
+            fetch(`/toggle/${boxId}/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (data.is_saved) {
+                        boxElement.classList.add('saved');
+                        addCelebrationEffect(boxElement);
+                    } else {
+                        boxElement.classList.remove('saved');
+                    }
+                    updateProgress(data.saved_amount, data.total_amount, data.progress_percentage);
+                } else {
+                    showNotification('Error updating savings box', 'error');
+                }
+            })
+            .catch(error => showNotification('Network error occurred', 'error'))
+            .finally(() => {
+                setTimeout(() => boxElement.classList.remove('saving'), 300);
+            });
+        }
+        
+        function updateProgress(savedAmount, totalAmount, progressPercentage) {
+            if(progressFill) progressFill.style.width = `${progressPercentage}%`;
+            progressPercentage = Math.round(progressPercentage * 10) / 10;
+            if(progressPercentageElement) progressPercentageElement.textContent = `${progressPercentage}% Complete`;
+            if(savedAmountElement) animateNumber(savedAmountElement, currentSavedAmount, savedAmount, '₹');
+            
+            currentSavedAmount = savedAmount;
+            currentTotalAmount = totalAmount;
+            currentProgressPercentage = progressPercentage;
+            
+            if (progressPercentage >= 100) showGoalReachedCelebration();
+        }
+        
+        function animateNumber(element, startValue, endValue, prefix = '') {
+            const duration = 500;
+            const startTime = performance.now();
+            const difference = endValue - startValue;
+            
+            function animate(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easedProgress = 1 - Math.pow(1 - progress, 3);
+                const currentValue = Math.round(startValue + (difference * easedProgress));
+                element.textContent = `${prefix}${currentValue.toLocaleString()}`;
+                if (progress < 1) requestAnimationFrame(animate);
+            }
+            requestAnimationFrame(animate);
+        }
+        
+        function addCelebrationEffect(boxElement) {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => createSparkle(boxElement), i * 100);
+            }
+        }
+        
+        function createSparkle(element) {
+            const sparkle = document.createElement('div');
+            Object.assign(sparkle.style, {
+                position: 'absolute', width: '6px', height: '6px', background: '#FFD700',
+                borderRadius: '50%', pointerEvents: 'none', zIndex: '1000'
+            });
+            
+            const rect = element.getBoundingClientRect();
+            sparkle.style.left = `${rect.left + Math.random() * rect.width}px`;
+            sparkle.style.top = `${rect.top + Math.random() * rect.height}px`;
+            document.body.appendChild(sparkle);
+            
+            const animation = sparkle.animate([
+                { transform: 'scale(0) rotate(0deg)', opacity: 1 },
+                { transform: 'scale(1) rotate(180deg)', opacity: 1 },
+                { transform: 'scale(0) rotate(360deg)', opacity: 0 }
+            ], { duration: 800, easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)' });
+            
+            animation.onfinish = () => sparkle.remove();
+        }
+        
+        function showGoalReachedCelebration() {
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => createConfetti(), i * 50);
+            }
+            showNotification('🎉 Congratulations! You\'ve reached your ₹1,00,000 savings goal!', 'success', 5000);
+        }
+        
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            Object.assign(confetti.style, {
+                position: 'fixed', width: '10px', height: '10px',
+                background: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                borderRadius: '50%', pointerEvents: 'none', zIndex: '1001',
+                left: `${Math.random() * window.innerWidth}px`, top: '-10px'
+            });
+            document.body.appendChild(confetti);
+            
+            const animation = confetti.animate([
+                { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                { transform: `translateY(${window.innerHeight + 10}px) rotate(720deg)`, opacity: 0 }
+            ], { duration: Math.random() * 2000 + 1000, easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)' });
+            
+            animation.onfinish = () => confetti.remove();
+        }
+        
+        function regenerateBoxes() {
+            if (confirm('Generate a new savings challenge?')) {
+                showLoading();
+                fetch('/initialize/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) location.reload();
+                    else showNotification('Error generating new challenge', 'error');
+                })
+                .catch(() => showNotification('Network error occurred', 'error'))
+                .finally(() => hideLoading());
+            }
+        }
+        
+        function showLoading() { if(loadingOverlay) loadingOverlay.style.display = 'flex'; }
+        function hideLoading() { if(loadingOverlay) loadingOverlay.style.display = 'none'; }
+        
+        function showNotification(message, type = 'info', duration = 3000) {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            Object.assign(notification.style, {
+                position: 'fixed', top: '20px', right: '20px', padding: '15px 20px',
+                borderRadius: '8px', color: 'white', fontWeight: '600', zIndex: '1002',
+                maxWidth: '400px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+                transform: 'translateX(100%)', transition: 'transform 0.3s ease',
+                background: type === 'success' ? '#4CAF50' : type === 'error' ? '#F44336' : '#2196F3'
+            });
+            document.body.appendChild(notification);
+            setTimeout(() => notification.style.transform = 'translateX(0)', 100);
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, duration);
+        }
+        
+        function getCSRFToken() {
+            const name = 'csrftoken';
+            let cookieValue = null;
+            if (document.cookie) {
+                const cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    cookie = cookie.trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            if (!cookieValue) {
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+                if (csrfToken) cookieValue = csrfToken.value;
+            }
+            return cookieValue || '';
+        }
+        
+        // Add entrance animations
+        savingsBoxes.forEach((box, index) => {
+            box.style.opacity = '0';
+            box.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                box.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                box.style.opacity = '1';
+                box.style.transform = 'translateY(0)';
+            }, index * 30);
+        });
+    });
+    </script>
     {% block extra_js %}
     {% endblock %}
 </body>
