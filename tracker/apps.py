@@ -20,11 +20,19 @@ class TrackerConfig(AppConfig):
                 # Table doesn't exist, run migrations
                 try:
                     from django.core.management import call_command
+                    
+                    # Collect static files
+                    print("Collecting static files...")
+                    call_command('collectstatic', verbosity=0, interactive=False)
+                    
+                    # Run migrations
+                    print("Running migrations...")
                     call_command('migrate', verbosity=0, interactive=False)
                     
                     # Initialize boxes
                     from .models import SavingsBox
                     if not SavingsBox.objects.exists():
+                        print("Initializing savings boxes...")
                         SavingsBox.initialize_boxes()
                 except Exception as e:
-                    print(f"Migration failed: {e}")
+                    print(f"Startup process failed: {e}")
