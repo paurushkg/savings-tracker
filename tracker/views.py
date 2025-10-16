@@ -1,20 +1,29 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Sum, Count
+from django.db import connection
 from .models import SavingsBox
 import json
 
 
 def index(request):
     """Main view displaying the savings tracker grid"""
-    boxes = SavingsBox.objects.all()
-    
-    # Initialize boxes if none exist
-    if not boxes.exists():
-        SavingsBox.initialize_boxes()
+    try:
+        # Check if table exists by attempting a simple query
         boxes = SavingsBox.objects.all()
+        
+        # Initialize boxes if none exist
+        if not boxes.exists():
+            SavingsBox.initialize_boxes()
+            boxes = SavingsBox.objects.all()
+    except Exception as e:
+        # If table doesn't exist or other database error, return error message
+        return HttpResponse(
+            f"<h1>Database Error</h1><p>Please wait while the database is being set up...</p><p>Error: {str(e)}</p><p>Try refreshing in a few moments.</p>",
+            status=503
+        )
     
     # Calculate progress
     total_amount = boxes.aggregate(Sum('value'))['value__sum'] or 0
