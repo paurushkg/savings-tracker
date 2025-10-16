@@ -69,6 +69,12 @@ def reset_progress(request):
     return JsonResponse({'success': False})
 
 
+def logout_view(request):
+    """Logout and clear authentication session"""
+    request.session.pop('authenticated', None)
+    return HttpResponse("<h1>Logged out successfully</h1><p><a href='/'>Return to login</a></p>")
+
+
 def initialize_boxes_view(request):
     """Re-initialize all savings boxes"""
     if request.method == 'POST':
