@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
+from django.middleware.csrf import get_token
 
 
 class PasscodeMiddleware:
@@ -32,6 +33,7 @@ class PasscodeMiddleware:
         return self.render_passcode_form(request)
 
     def render_passcode_form(self, request, error=None):
+        csrf_token = get_token(request)
         html = f"""
         <!DOCTYPE html>
         <html lang="en">
@@ -141,6 +143,7 @@ class PasscodeMiddleware:
                 {"<div class='error'>" + error + "</div>" if error else ""}
                 
                 <form method="POST">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">
                     <div class="form-group">
                         <label for="passcode">Passcode:</label>
                         <input type="password" id="passcode" name="passcode" required autofocus>
@@ -152,5 +155,5 @@ class PasscodeMiddleware:
             </div>
         </body>
         </html>
-        """
+        """.format(csrf_token=csrf_token)
         return HttpResponse(html)
