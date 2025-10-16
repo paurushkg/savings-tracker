@@ -60,6 +60,14 @@ def toggle_box(request, box_id):
 
 
 
+def reset_progress(request):
+    """Reset all saved progress"""
+    if request.method == 'POST':
+        SavingsBox.objects.all().update(is_saved=False)
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
+
+
 def initialize_boxes_view(request):
     """Re-initialize all savings boxes"""
     if request.method == 'POST':
