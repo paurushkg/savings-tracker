@@ -1,0 +1,362 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #8B4513 0%, #A0522D 25%, #CD853F  50%, #D2B48C 75%, #F5DEB3 100%);
+    min-height: 100vh;
+    padding: 20px;
+    background-attachment: fixed;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Main savings tracker */
+.savings-tracker {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(139, 69, 19, 0.2);
+}
+
+/* Header */
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #8B4513;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #A0522D;
+    font-weight: 400;
+}
+
+/* Progress section */
+.progress-section {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.progress-info {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #8B4513;
+    margin-bottom: 15px;
+}
+
+.saved-amount {
+    color: #228B22;
+}
+
+.separator {
+    color: #A0522D;
+    margin: 0 10px;
+}
+
+.total-amount {
+    color: #8B4513;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(139, 69, 19, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    border: 1px solid rgba(139, 69, 19, 0.3);
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #32CD32, #228B22);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+.progress-percentage {
+    font-size: 1.1rem;
+    color: #8B4513;
+    font-weight: 500;
+}
+
+/* Controls */
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.control-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.reset-btn {
+    background: #FF6B6B;
+    color: white;
+}
+
+.reset-btn:hover {
+    background: #FF5252;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.regenerate-btn {
+    background: #4ECDC4;
+    color: white;
+}
+
+.regenerate-btn:hover {
+    background: #45B7AF;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Savings grid */
+.savings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+    margin-bottom: 40px;
+    padding: 20px;
+    background: rgba(139, 69, 19, 0.05);
+    border-radius: 15px;
+    border: 1px solid rgba(139, 69, 19, 0.1);
+}
+
+.savings-box {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, #F5DEB3, #DEB887);
+    border: 2px solid #CD853F;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 
+        0 4px 8px rgba(0, 0, 0, 0.1),
+        inset 0 1px 2px rgba(255, 255, 255, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+.savings-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        45deg,
+        transparent 25%,
+        rgba(205, 133, 63, 0.1) 25%,
+        rgba(205, 133, 63, 0.1) 50%,
+        transparent 50%,
+        transparent 75%,
+        rgba(205, 133, 63, 0.1) 75%
+    );
+    background-size: 20px 20px;
+}
+
+.savings-box:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 
+        0 8px 16px rgba(0, 0, 0, 0.2),
+        inset 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.savings-box.saved {
+    background: linear-gradient(145deg, #98FB98, #32CD32);
+    border-color: #228B22;
+    color: white;
+    transform: scale(0.95);
+}
+
+.savings-box.saved::before {
+    background: linear-gradient(
+        45deg,
+        transparent 25%,
+        rgba(34, 139, 34, 0.2) 25%,
+        rgba(34, 139, 34, 0.2) 50%,
+        transparent 50%,
+        transparent 75%,
+        rgba(34, 139, 34, 0.2) 75%
+    );
+}
+
+.savings-box.saved:hover {
+    transform: scale(1.02);
+}
+
+.box-amount {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #8B4513;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+    z-index: 1;
+}
+
+.savings-box.saved .box-amount {
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Footer message */
+.footer-message {
+    text-align: center;
+    padding: 20px;
+    background: rgba(139, 69, 19, 0.1);
+    border-radius: 15px;
+    border: 1px solid rgba(139, 69, 19, 0.2);
+}
+
+.footer-message p {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #8B4513;
+    font-style: italic;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* Loading overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-top: 5px solid #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .savings-tracker {
+        padding: 20px;
+    }
+    
+    .title {
+        font-size: 2rem;
+    }
+    
+    .subtitle {
+        font-size: 1rem;
+    }
+    
+    .progress-info {
+        font-size: 1.4rem;
+    }
+    
+    .savings-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+        padding: 15px;
+    }
+    
+    .box-amount {
+        font-size: 0.9rem;
+    }
+    
+    .controls {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .control-btn {
+        width: 200px;
+    }
+    
+    .footer-message p {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .title {
+        font-size: 1.6rem;
+    }
+    
+    .progress-info {
+        font-size: 1.2rem;
+    }
+    
+    .savings-grid {
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 8px;
+    }
+    
+    .box-amount {
+        font-size: 0.8rem;
+    }
+    
+    .footer-message p {
+        font-size: 1rem;
+    }
+}
+
+/* Animation for box state changes */
+@keyframes saveAnimation {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(0.95);
+    }
+}
+
+.savings-box.saving {
+    animation: saveAnimation 0.3s ease;
+}

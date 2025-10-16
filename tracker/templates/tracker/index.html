@@ -1,0 +1,61 @@
+{% extends 'tracker/base.html' %}
+
+{% block title %}₹1,00,000 Savings Tracker{% endblock %}
+
+{% block content %}
+<div class="savings-tracker">
+    <!-- Header -->
+    <div class="header">
+        <h1 class="title">₹1,00,000 Savings Challenge</h1>
+        <p class="subtitle">Small Amounts Become Big Savings</p>
+    </div>
+    
+    <!-- Progress Section -->
+    <div class="progress-section">
+        <div class="progress-info">
+            <span class="saved-amount">₹{{ saved_amount|floatformat:0 }}</span>
+            <span class="separator">/</span>
+            <span class="total-amount">₹{{ total_amount|floatformat:0 }}</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: {{ progress_percentage }}%"></div>
+        </div>
+        <div class="progress-percentage">{{ progress_percentage }}% Complete</div>
+    </div>
+    
+    <!-- Control Buttons -->
+    <div class="controls">
+        <button id="regenerate-btn" class="control-btn regenerate-btn">New Challenge</button>
+    </div>
+    
+    <!-- Savings Grid -->
+    <div class="savings-grid" id="savings-grid">
+        {% for box in boxes %}
+        <div class="savings-box {% if box.is_saved %}saved{% endif %}" 
+             data-box-id="{{ box.id }}" 
+             data-value="{{ box.value }}">
+            <span class="box-amount">₹{{ box.value }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Footer Message -->
+    <div class="footer-message">
+        <p>₹1,00,000 — Small Amounts Become Big Savings</p>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loading-overlay" class="loading-overlay">
+    <div class="loading-spinner"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Pass Django context to JavaScript
+    window.savedAmount = {{ saved_amount }};
+    window.totalAmount = {{ total_amount }};
+    window.progressPercentage = {{ progress_percentage }};
+</script>
+{% endblock %}
