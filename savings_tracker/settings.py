@@ -77,6 +77,10 @@ WSGI_APPLICATION = 'savings_tracker.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# Print database URL for debugging (only first 50 chars to avoid exposing credentials)
+db_url = os.environ.get('DATABASE_URL', 'Not set')
+print(f"Database URL: {db_url[:50]}..." if len(db_url) > 50 else f"Database URL: {db_url}")
+
 DATABASES = {
     'default': dj_database_url.config(
         default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
